@@ -32,6 +32,7 @@ INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR}/include)
 
 #source files
 AUX_SOURCE_DIRECTORY(src/nepe2 NEPE2CLI_SOURCES)
+AUX_SOURCE_DIRECTORY(src/legacy2nepe2 LEGACY2NEPE2_SOURCES)
 
 ADD_EXECUTABLE(nepe2 ${NEPE2CLI_SOURCES})
 
@@ -41,6 +42,16 @@ TARGET_COMPILE_OPTIONS(
                      -Wno-unused-command-line-argument)
 TARGET_LINK_LIBRARIES(
     nepe2
+    PRIVATE -O2 PkgConfig::nepe2base)
+
+ADD_EXECUTABLE(legacy2nepe2 ${LEGACY2NEPE2_SOURCES})
+
+TARGET_COMPILE_OPTIONS(
+    legacy2nepe2 PRIVATE -O2 ${nepe2base_CFLAGS}
+                     -Wall -Werror -Wextra -Wpedantic
+                     -Wno-unused-command-line-argument)
+TARGET_LINK_LIBRARIES(
+    legacy2nepe2
     PRIVATE -O2 PkgConfig::nepe2base)
 
 #Build a pkg-config file
