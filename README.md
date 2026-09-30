@@ -8,5 +8,5 @@ This utility should be run on a separate and trusted terminal / xterm session.
 Building
 --------
 
-This utility requires cmake, nepe2-base, rcpr, minunit, libcrypto (OpenSSL or
-LibreSSL), and XCB. It uses pkgconfig to find required libraries.
+This utility requires cmake, nepe2-base, rcpr, minunit, and libcrypto (OpenSSL
+or LibreSSL). It uses pkgconfig to find required libraries.
