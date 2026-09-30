@@ -7,6 +7,7 @@
  * distribution for the license terms under which this software is distributed.
  */
 
+#include <nepe2/nepe2.h>
 #include <stdio.h>
 
 /**
@@ -21,10 +22,22 @@
  */
 int main(int argc, char* argv[])
 {
+    status retval;
+
     (void)argc;
     (void)argv;
 
-    printf("Not yet implemented.\n");
+    /* register nepe2 library. */
+    retval = nepe2_register();
+    if (STATUS_SUCCESS != retval)
+    {
+        fprintf(stderr, "Could not register nepe2 library.\n");
+        goto done;
+    }
 
-    return 1;
+    printf("Not yet implemented.\n");
+    retval = 1;
+
+done:
+    return retval;
 }
