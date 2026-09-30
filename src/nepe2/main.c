@@ -1,5 +1,5 @@
 /**
- * \file main.c
+ * \file nepe2/main.c
  *
  * \brief Main entry point for the nepe2 CLI tool.
  *
