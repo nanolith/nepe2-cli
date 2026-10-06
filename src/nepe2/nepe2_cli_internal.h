@@ -26,6 +26,24 @@ struct nepe2_cli_instance
     secure_buffer* session_passphrase;
 };
 
+/******************************************************************************/
+/* Start of constructors.                                                     */
+/******************************************************************************/
+
+/**
+ * \brief Create a nepe2_cli_instance with NULL salt, master_passphrase, and
+ * session_passphrase buffers pointers.
+ *
+ * \param inst              Pointer to the instance pointer to set to this
+ *                          instance on success.
+ *
+ * \returns a status code indicating success or failure.
+ *      - STATUS_SUCCESS on success.
+ *      - a non-zero error code on failure.
+ */
+status FN_DECL_MUST_CHECK
+nepe2_cli_instance_create(nepe2_cli_instance** inst);
+
 /* C++ compatibility. */
 # ifdef   __cplusplus
 }
