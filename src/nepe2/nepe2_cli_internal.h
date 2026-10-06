@@ -44,6 +44,17 @@ struct nepe2_cli_instance
 status FN_DECL_MUST_CHECK
 nepe2_cli_instance_create(nepe2_cli_instance** inst);
 
+/**
+ * \brief Release a \ref nepe2_cli_instance resource.
+ *
+ * \param r                 The resource to release.
+ *
+ * \returns a status code indicating success or failure.
+ *      - STATUS_SUCCESS on success.
+ *      - a non-zero error code on failure.
+ */
+status nepe2_cli_instance_resource_release(RCPR_SYM(resource)* r);
+
 /* C++ compatibility. */
 # ifdef   __cplusplus
 }
