@@ -7,8 +7,9 @@
  * distribution for the license terms under which this software is distributed.
  */
 
-#include <nepe2/nepe2.h>
 #include <stdio.h>
+
+#include "nepe2_cli_internal.h"
 
 /**
  * \brief Main entry point.
