@@ -56,6 +56,17 @@ int main(int argc, char* argv[])
         goto cleanup_inst;
     }
 
+    /* read master passphrase. */
+    printf("Enter master passphrase: ");
+    fflush(stdout);
+    retval =
+        terminal_readpassphrase(
+            &inst->master_passphrase, inst->alloc, 4096, false);
+    if (STATUS_SUCCESS != retval)
+    {
+        goto cleanup_inst;
+    }
+
     printf("Not yet implemented.\n");
     retval = 1;
 
