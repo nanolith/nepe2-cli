@@ -28,6 +28,16 @@ status legacy_cli_instance_resource_release(RCPR_SYM(resource)* r)
     status retval = STATUS_SUCCESS, release_retval;
     legacy_cli_instance* inst = (legacy_cli_instance*)r;
 
+    /* release db if set. */
+    if (NULL != inst->db)
+    {
+        release_retval = resource_release(database_resource_handle(inst->db));
+        if (STATUS_SUCCESS != release_retval)
+        {
+            retval = release_retval;
+        }
+    }
+
     /* release salt if set. */
     if (NULL != inst->salt)
     {
