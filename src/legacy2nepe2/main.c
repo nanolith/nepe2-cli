@@ -76,7 +76,6 @@ int main(int argc, char* argv[])
     retval = open_database("legacy2nepe2.db", inst);
     if (STATUS_SUCCESS != retval)
     {
-        fprintf(stderr, "Error opening database.\n");
         goto cleanup_inst;
     }
 
@@ -318,6 +317,7 @@ static status open_database(const char* dbname, legacy_cli_instance* inst)
     {
         if (EEXIST != errno)
         {
+            fprintf(stderr, "Error creating database directory.\n");
             retval = ERROR_DATABASE_MDB_ENV_OPEN;
             goto done;
         }
@@ -327,6 +327,7 @@ static status open_database(const char* dbname, legacy_cli_instance* inst)
     retval = database_open(&inst->db, inst->alloc, dbname);
     if (STATUS_SUCCESS != retval)
     {
+        fprintf(stderr, "Error opening database.\n");
         goto done;
     }
 
@@ -334,6 +335,7 @@ static status open_database(const char* dbname, legacy_cli_instance* inst)
     retval = database_check_or_insert_schema(inst->db);
     if (STATUS_SUCCESS != retval)
     {
+        fprintf(stderr, "Invalid database schema version.\n");
         goto done;
     }
 
