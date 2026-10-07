@@ -38,6 +38,18 @@ status legacy_cli_instance_resource_release(RCPR_SYM(resource)* r)
         }
     }
 
+    /* release encryption key if set. */
+    if (NULL != inst->encryption_key)
+    {
+        release_retval =
+            resource_release(
+                secure_buffer_resource_handle(inst->encryption_key));
+        if (STATUS_SUCCESS != release_retval)
+        {
+            retval = release_retval;
+        }
+    }
+
     /* release encryption salt if set. */
     if (NULL != inst->encryption_salt)
     {
