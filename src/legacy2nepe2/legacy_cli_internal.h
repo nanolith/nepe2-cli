@@ -25,6 +25,24 @@ struct legacy_cli_instance
     secure_buffer* master_passphrase;
 };
 
+/******************************************************************************/
+/* Start of constructors.                                                     */
+/******************************************************************************/
+
+/**
+ * \brief Create a legacy_cli_instance with NULL salt and master_passphrase
+ * buffer pointers.
+ *
+ * \param inst              Pointer to the instance pointer to set to this
+ *                          instance on success.
+ *
+ * \returns a status code indicating success or failure.
+ *      - STATUS_SUCCESS on success.
+ *      - a non-zero error code on failure.
+ */
+status FN_DECL_MUST_CHECK
+legacy_cli_instance_create(legacy_cli_instance** inst);
+
 /* C++ compatibility. */
 # ifdef   __cplusplus
 }
