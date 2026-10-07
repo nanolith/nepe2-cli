@@ -7,8 +7,9 @@
  * distribution for the license terms under which this software is distributed.
  */
 
-#include <nepe2/nepe2.h>
 #include <stdio.h>
+
+#include "legacy_cli_internal.h"
 
 /**
  * \brief legacy2nepe2 entry point.
