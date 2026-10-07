@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include <nepe2/database.h>
 #include <nepe2/nepe2.h>
 
 /* C++ compatibility. */
@@ -23,6 +24,7 @@ struct legacy_cli_instance
     RCPR_SYM(allocator)* alloc;
     secure_buffer* salt;
     secure_buffer* master_passphrase;
+    database* db;
 };
 
 /******************************************************************************/
