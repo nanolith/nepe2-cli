@@ -11,6 +11,8 @@
 
 #include "legacy_cli_internal.h"
 
+RCPR_IMPORT_resource;
+
 /**
  * \brief legacy2nepe2 entry point.
  *
@@ -23,10 +25,10 @@
  */
 int main(int argc, char* argv[])
 {
-    status retval;
-
     (void)argc;
     (void)argv;
+    status retval, release_retval;
+    legacy_cli_instance* inst;
 
     /* register nepe2 library. */
     retval = nepe2_register();
@@ -36,8 +38,24 @@ int main(int argc, char* argv[])
         goto done;
     }
 
+    /* create instance. */
+    retval = legacy_cli_instance_create(&inst);
+    if (STATUS_SUCCESS != retval)
+    {
+        fprintf(stderr, "Error creating instance.\n");
+        goto done;
+    }
+
     printf("Not yet implemented.\n");
     retval = 1;
+    goto cleanup_inst;
+
+cleanup_inst:
+    release_retval = resource_release(&inst->hdr);
+    if (STATUS_SUCCESS != release_retval)
+    {
+        retval = release_retval;
+    }
 
 done:
     return retval;
