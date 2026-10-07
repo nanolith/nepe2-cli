@@ -43,6 +43,17 @@ struct legacy_cli_instance
 status FN_DECL_MUST_CHECK
 legacy_cli_instance_create(legacy_cli_instance** inst);
 
+/**
+ * \brief Release a \ref legacy_cli_instance resource.
+ *
+ * \param r                 The resource to release.
+ *
+ * \returns a status code indicating success or failure.
+ *      - STATUS_SUCCESS on success.
+ *      - a non-zero error code on failure.
+ */
+status legacy_cli_instance_resource_release(RCPR_SYM(resource)* r);
+
 /* C++ compatibility. */
 # ifdef   __cplusplus
 }
