@@ -7,6 +7,7 @@
  * distribution for the license terms under which this software is distributed.
  */
 
+#include <nepe2/terminal.h>
 #include <stdio.h>
 
 #include "legacy_cli_internal.h"
@@ -44,6 +45,15 @@ int main(int argc, char* argv[])
     {
         fprintf(stderr, "Error creating instance.\n");
         goto done;
+    }
+
+    /* read salt. */
+    printf("Enter salt: ");
+    fflush(stdout);
+    retval = terminal_readpassphrase(&inst->salt, inst->alloc, 4096, false);
+    if (STATUS_SUCCESS != retval)
+    {
+        goto cleanup_inst;
     }
 
     printf("Not yet implemented.\n");
