@@ -24,6 +24,7 @@ struct legacy_cli_instance
     RCPR_SYM(allocator)* alloc;
     secure_buffer* salt;
     secure_buffer* master_passphrase;
+    secure_buffer* encryption_salt;
     database* db;
 };
 
