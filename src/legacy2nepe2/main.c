@@ -315,6 +315,20 @@ static status open_database(const char* dbname, legacy_cli_instance* inst)
 
     /* open the database. */
     retval = database_open(&inst->db, inst->alloc, dbname);
+    if (STATUS_SUCCESS != retval)
+    {
+        goto done;
+    }
+
+    /* verify the schema. */
+    retval = database_check_or_insert_schema(inst->db);
+    if (STATUS_SUCCESS != retval)
+    {
+        goto done;
+    }
+
+    /* success. */
+    retval = STATUS_SUCCESS;
     goto done;
 
 done:
