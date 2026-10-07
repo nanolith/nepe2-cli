@@ -80,6 +80,16 @@ int main(int argc, char* argv[])
         goto cleanup_inst;
     }
 
+    /* get the encryption salt. */
+    retval =
+        database_get_or_insert_encryption_salt(
+            &inst->encryption_salt, inst->alloc, inst->db);
+    if (STATUS_SUCCESS != retval)
+    {
+        fprintf(stderr, "Error getting encryption salt.\n");
+        goto cleanup_inst;
+    }
+
     printf("Not yet implemented.\n");
     retval = 1;
     goto cleanup_inst;
