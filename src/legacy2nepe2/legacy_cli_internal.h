@@ -1,5 +1,5 @@
 /**
- * \file nepe2/legacy_cli_internal.h
+ * \file legacy2nepe2/legacy_cli_internal.h
  *
  * \brief Internals for the legacy2nepe2 conversion utility.
  *
