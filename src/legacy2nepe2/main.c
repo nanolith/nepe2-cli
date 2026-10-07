@@ -58,5 +58,10 @@ cleanup_inst:
     }
 
 done:
-    return retval;
+    if (STATUS_SUCCESS != retval)
+    {
+        return 1;
+    }
+
+    return 0;
 }
