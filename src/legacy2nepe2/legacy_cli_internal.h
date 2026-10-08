@@ -11,6 +11,7 @@
 
 #include <nepe2/database.h>
 #include <nepe2/nepe2.h>
+#include <stdio.h>
 
 /* C++ compatibility. */
 # ifdef   __cplusplus
@@ -57,6 +58,23 @@ legacy_cli_instance_create(legacy_cli_instance** inst);
  *      - a non-zero error code on failure.
  */
 status legacy_cli_instance_resource_release(RCPR_SYM(resource)* r);
+
+/******************************************************************************/
+/* Start of protected methods.                                                */
+/******************************************************************************/
+
+/**
+ * \brief Read lines from the given metadata file, inserting them into the
+ * database.
+ *
+ * \param inst              The instance for this operation.
+ * \param input             The input file from which these lines are read.
+ *
+ * \returns a status code indicating success or failure.
+ *      - STATUS_SUCCESS on success.
+ *      - a non-zero error code on failure.
+ */
+status load_metadata_file(legacy_cli_instance* inst, FILE* input);
 
 /* C++ compatibility. */
 # ifdef   __cplusplus
