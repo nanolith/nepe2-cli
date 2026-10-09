@@ -78,28 +78,6 @@ int main(int argc, char* argv[])
         goto cleanup_inst;
     }
 
-    /* get the encryption salt. */
-    retval =
-        database_get_or_insert_encryption_salt(
-            &inst->encryption_salt, inst->alloc, inst->db);
-    if (STATUS_SUCCESS != retval)
-    {
-        fprintf(stderr, "Error getting encryption salt.\n");
-        goto cleanup_inst;
-    }
-
-    /* derive the encryption key. */
-    printf("Deriving database encryption key...\n");
-    retval =
-        database_create_encryption_key(
-            &inst->encryption_key, inst->alloc, inst->master_passphrase,
-            inst->encryption_salt);
-    if (STATUS_SUCCESS != retval)
-    {
-        fprintf(stderr, "Error deriving encryption key.\n");
-        goto cleanup_inst;
-    }
-
     printf("Not yet implemented.\n");
     retval = 1;
     goto cleanup_inst;
@@ -314,6 +292,28 @@ static status open_database(const char* dbname, nepe2_cli_instance* inst)
     if (STATUS_SUCCESS != retval)
     {
         fprintf(stderr, "Invalid database schema version.\n");
+        goto done;
+    }
+
+    /* get the encryption salt. */
+    retval =
+        database_get_or_insert_encryption_salt(
+            &inst->encryption_salt, inst->alloc, inst->db);
+    if (STATUS_SUCCESS != retval)
+    {
+        fprintf(stderr, "Error getting encryption salt.\n");
+        goto done;
+    }
+
+    /* derive the encryption key. */
+    printf("Deriving database encryption key...\n");
+    retval =
+        database_create_encryption_key(
+            &inst->encryption_key, inst->alloc, inst->master_passphrase,
+            inst->encryption_salt);
+    if (STATUS_SUCCESS != retval)
+    {
+        fprintf(stderr, "Error deriving encryption key.\n");
         goto done;
     }
 
