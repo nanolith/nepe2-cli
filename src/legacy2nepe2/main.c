@@ -121,8 +121,17 @@ int main(int argc, char* argv[])
         goto cleanup_inst;
     }
 
-    printf("Not yet implemented.\n");
-    retval = 1;
+    /* import entries. */
+    retval = load_metadata_file(inst, input);
+    if (STATUS_SUCCESS != retval)
+    {
+        fprintf(stderr, "Error importing legacy metadata.\n");
+        goto cleanup_inst;
+    }
+
+    /* success. */
+    printf("Import successful.\n");
+    retval = STATUS_SUCCESS;
     goto cleanup_inst;
 
 cleanup_inst:
