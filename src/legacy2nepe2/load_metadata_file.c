@@ -64,6 +64,8 @@ status load_metadata_file(legacy_cli_instance* inst, FILE* input)
         n = 0;
     }
 
+    /* success. */
+    retval = STATUS_SUCCESS;
     goto done;
 
 cleanup_line:
