@@ -26,6 +26,7 @@ struct nepe2_cli_instance
     secure_buffer* master_passphrase;
     secure_buffer* session_passphrase;
     secure_buffer* encryption_salt;
+    secure_buffer* encryption_key;
     database* db;
 };
 
