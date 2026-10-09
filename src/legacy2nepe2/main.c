@@ -39,6 +39,17 @@ int main(int argc, char* argv[])
     (void)argv;
     status retval, release_retval;
     legacy_cli_instance* inst;
+    FILE* input = NULL;
+
+    if (argc != 2)
+    {
+        fprintf(
+            stderr,
+            "This program expects one argument: the legacy nepephemeral input "
+            "file name.\n");
+        retval = 1;
+        goto done;
+    }
 
     /* register nepe2 library. */
     retval = nepe2_register();
@@ -48,12 +59,21 @@ int main(int argc, char* argv[])
         goto done;
     }
 
+    /* open import file for reading. */
+    input = fopen(argv[1], "r");
+    if (NULL == input)
+    {
+        perror("Error opening input file");
+        retval = 1;
+        goto done;
+    }
+
     /* create instance. */
     retval = legacy_cli_instance_create(&inst);
     if (STATUS_SUCCESS != retval)
     {
         fprintf(stderr, "Error creating instance.\n");
-        goto done;
+        goto cleanup_input;
     }
 
     /* read salt. */
@@ -111,6 +131,9 @@ cleanup_inst:
     {
         retval = release_retval;
     }
+
+cleanup_input:
+    fclose(input);
 
 done:
     if (STATUS_SUCCESS != retval)
