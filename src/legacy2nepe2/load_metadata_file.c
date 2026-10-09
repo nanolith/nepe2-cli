@@ -142,6 +142,9 @@ static status insert_line(legacy_cli_instance* inst, char* line)
             == rcpr_multisplit(
                     (const char**)&field, &iter, data, &is_field_separator))
     {
+        /* on each subsequent call, this field should be NULL. */
+        data = NULL;
+
         /* split the field into key and value. */
         retval = rcpr_split(&key, &value, (char*)field, '=');
         if (STATUS_SUCCESS != retval)
