@@ -28,6 +28,18 @@ status nepe2_cli_instance_resource_release(RCPR_SYM(resource)* r)
     status retval = STATUS_SUCCESS, release_retval;
     nepe2_cli_instance* inst = (nepe2_cli_instance*)r;
 
+    /* release encryption key if set. */
+    if (NULL != inst->encryption_key)
+    {
+        release_retval =
+            resource_release(
+                secure_buffer_resource_handle(inst->encryption_key));
+        if (STATUS_SUCCESS != release_retval)
+        {
+            retval = release_retval;
+        }
+    }
+
     /* release encryption salt if set. */
     if (NULL != inst->encryption_salt)
     {
