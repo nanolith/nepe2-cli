@@ -16,6 +16,7 @@
 
 RCPR_IMPORT_resource;
 
+static status read_and_verify_master_passphrase(nepe2_cli_instance* inst);
 static status verify_master_passphrase(bool* valid, nepe2_cli_instance* inst);
 
 /**
@@ -34,7 +35,6 @@ int main(int argc, char* argv[])
     (void)argv;
     status retval, release_retval;
     nepe2_cli_instance* inst;
-    bool master_passphrase_valid = false;
 
     /* register nepe2 library. */
     retval = nepe2_register();
@@ -61,27 +61,12 @@ int main(int argc, char* argv[])
         goto cleanup_inst;
     }
 
-    do
+    /* read master passphrase. */
+    retval = read_and_verify_master_passphrase(inst);
+    if (STATUS_SUCCESS != retval)
     {
-        /* read master passphrase. */
-        printf("Enter master passphrase: ");
-        fflush(stdout);
-        retval =
-            terminal_readpassphrase(
-                &inst->master_passphrase, inst->alloc, 4096, false);
-        if (STATUS_SUCCESS != retval)
-        {
-            goto cleanup_inst;
-        }
-
-        /* verify that this passphrase looks right. */
-        retval = verify_master_passphrase(&master_passphrase_valid, inst);
-        if (STATUS_SUCCESS != retval)
-        {
-            fprintf(stderr, "Error verifying passphrase.\n");
-            goto cleanup_inst;
-        }
-    } while (!master_passphrase_valid);
+        goto cleanup_inst;
+    }
 
     printf("Not yet implemented.\n");
     retval = 1;
@@ -101,6 +86,51 @@ done:
     }
 
     return 0;
+}
+
+/**
+ * \brief Read the master passphrase in a verification loop.
+ *
+ * \param inst              The instance to use for this operation.
+ *
+ * \returns a status code indicating success or failure.
+ *      - STATUS_SUCCESS on success.
+ *      - a non-zero error code on failure.
+ */
+static status read_and_verify_master_passphrase(nepe2_cli_instance* inst)
+{
+    status retval;
+    bool valid = false;
+
+    /* loop until the user is satisfied. */
+    do
+    {
+        /* read the passphrase. */
+        printf("Enter master passphrase: ");
+        fflush(stdout);
+        retval =
+            terminal_readpassphrase(
+                &inst->master_passphrase, inst->alloc, 4096, false);
+        if (STATUS_SUCCESS != retval)
+        {
+            goto done;
+        }
+
+        /* verify it. */
+        retval = verify_master_passphrase(&valid, inst);
+        if (STATUS_SUCCESS != retval)
+        {
+            fprintf(stderr, "Error verifying passphrase.\n");
+            goto done;
+        }
+    } while(!valid);
+
+    /* success. */
+    retval = STATUS_SUCCESS;
+    goto done;
+
+done:
+    return retval;
 }
 
 /**
