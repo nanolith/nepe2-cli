@@ -40,6 +40,11 @@ status load_metadata_file(legacy_cli_instance* inst, FILE* input)
         retval = getline(&line, &n, input);
         if (retval < 0)
         {
+            /* if we've reached the end of the file, we are good. */
+            if (feof(input))
+            {
+                retval = STATUS_SUCCESS;
+            }
             goto done;
         }
 
