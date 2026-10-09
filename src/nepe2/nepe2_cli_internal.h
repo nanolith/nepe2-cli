@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include <nepe2/database.h>
 #include <nepe2/nepe2.h>
 
 /* C++ compatibility. */
@@ -24,6 +25,7 @@ struct nepe2_cli_instance
     secure_buffer* salt;
     secure_buffer* master_passphrase;
     secure_buffer* session_passphrase;
+    database* db;
 };
 
 /******************************************************************************/
