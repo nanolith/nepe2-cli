@@ -54,6 +54,7 @@ status load_metadata_file(legacy_cli_instance* inst, FILE* input)
         retval = insert_line(inst, line);
         if (STATUS_SUCCESS != retval)
         {
+            fprintf(stderr, "Error importing line.\n");
             goto cleanup_line;
         }
 
