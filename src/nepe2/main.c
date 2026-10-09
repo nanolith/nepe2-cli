@@ -21,6 +21,7 @@ RCPR_IMPORT_resource;
 static status read_and_verify_master_passphrase(nepe2_cli_instance* inst);
 static status verify_master_passphrase(bool* valid, nepe2_cli_instance* inst);
 static status open_database(const char* dbname, nepe2_cli_instance* inst);
+static status session_key_loop(nepe2_cli_instance* inst);
 
 /**
  * \brief Main entry point.
@@ -78,8 +79,8 @@ int main(int argc, char* argv[])
         goto cleanup_inst;
     }
 
-    printf("Not yet implemented.\n");
-    retval = 1;
+    /* handle session key read loop. */
+    retval = session_key_loop(inst);
     goto cleanup_inst;
 
 cleanup_inst:
@@ -96,6 +97,54 @@ done:
     }
 
     return 0;
+}
+
+/**
+ * \brief Handle the session key read and display loop.
+ *
+ * \param inst              The instance to use for this operation.
+ *
+ * \returns a status code indicating success or failure.
+ *      - STATUS_SUCCESS on success.
+ *      - a non-zero error code on failure.
+ */
+static status session_key_loop(nepe2_cli_instance* inst)
+{
+    status retval;
+    bool should_exit = false;
+
+    while (!should_exit)
+    {
+        /* read salt. */
+        printf("Enter session passphrase: ");
+        fflush(stdout);
+        retval =
+            terminal_readpassphrase(
+                &inst->session_passphrase, inst->alloc, 4096, false);
+        if (STATUS_SUCCESS != retval)
+        {
+            goto done;
+        }
+
+        printf("Session passphrase lookup not implemented.\n");
+
+        /* release the session passphrase. */
+        retval =
+            resource_release(
+                secure_buffer_resource_handle(inst->session_passphrase));
+        if (STATUS_SUCCESS != retval)
+        {
+            goto done;
+        }
+        inst->session_passphrase = NULL;
+    }
+
+    /* success. */
+    retval = STATUS_SUCCESS;
+    goto done;
+
+done:
+    return retval;
 }
 
 /**
