@@ -8,9 +8,11 @@
  */
 
 #include <ctype.h>
+#include <errno.h>
 #include <nepe2/error_codes.h>
 #include <nepe2/terminal.h>
 #include <stdio.h>
+#include <sys/stat.h>
 
 #include "nepe2_cli_internal.h"
 
@@ -18,6 +20,7 @@ RCPR_IMPORT_resource;
 
 static status read_and_verify_master_passphrase(nepe2_cli_instance* inst);
 static status verify_master_passphrase(bool* valid, nepe2_cli_instance* inst);
+static status open_database(const char* dbname, nepe2_cli_instance* inst);
 
 /**
  * \brief Main entry point.
@@ -63,6 +66,13 @@ int main(int argc, char* argv[])
 
     /* read master passphrase. */
     retval = read_and_verify_master_passphrase(inst);
+    if (STATUS_SUCCESS != retval)
+    {
+        goto cleanup_inst;
+    }
+
+    /* open the database. */
+    retval = open_database("nepe2.db", inst);
     if (STATUS_SUCCESS != retval)
     {
         goto cleanup_inst;
@@ -234,6 +244,60 @@ cleanup_hash1:
     {
         retval = release_retval;
     }
+
+done:
+    return retval;
+}
+
+/**
+ * \brief Open the database using the given database name.
+ *
+ * \note This function will attempt to create \p dbname as a directory before
+ * opening the database.
+ *
+ * \param dbname                The name of the directory where this database
+ *                              lives.
+ * \param inst                  The instance for this operation.
+ *
+ * \returns a status code indicating success or failure.
+ *      - STATUS_SUCCESS on success.
+ *      - a non-zero error code on failure.
+ */
+static status open_database(const char* dbname, nepe2_cli_instance* inst)
+{
+    status retval;
+
+    /* create the directory if it does not already exist. */
+    retval = mkdir(dbname, S_IRWXU);
+    if (retval < 0)
+    {
+        if (EEXIST != errno)
+        {
+            fprintf(stderr, "Error creating database directory.\n");
+            retval = ERROR_DATABASE_MDB_ENV_OPEN;
+            goto done;
+        }
+    }
+
+    /* open the database. */
+    retval = database_open(&inst->db, inst->alloc, dbname);
+    if (STATUS_SUCCESS != retval)
+    {
+        fprintf(stderr, "Error opening database.\n");
+        goto done;
+    }
+
+    /* verify the schema. */
+    retval = database_check_or_insert_schema(inst->db);
+    if (STATUS_SUCCESS != retval)
+    {
+        fprintf(stderr, "Invalid database schema version.\n");
+        goto done;
+    }
+
+    /* success. */
+    retval = STATUS_SUCCESS;
+    goto done;
 
 done:
     return retval;
