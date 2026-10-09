@@ -143,7 +143,7 @@ static status insert_line(legacy_cli_instance* inst, char* line)
                     (const char**)&field, &iter, data, &is_field_separator))
     {
         /* split the field into key and value. */
-        retval = rcpr_split(&key, &value, (char*)field, ':');
+        retval = rcpr_split(&key, &value, (char*)field, '=');
         if (STATUS_SUCCESS != retval)
         {
             goto cleanup_hash_id_buffer;
