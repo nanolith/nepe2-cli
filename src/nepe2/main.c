@@ -22,6 +22,7 @@ static status read_and_verify_master_passphrase(nepe2_cli_instance* inst);
 static status verify_master_passphrase(bool* valid, nepe2_cli_instance* inst);
 static status open_database(const char* dbname, nepe2_cli_instance* inst);
 static status session_key_loop(nepe2_cli_instance* inst);
+static status get_metadata(metadata** meta, nepe2_cli_instance* inst);
 
 /**
  * \brief Main entry point.
@@ -112,6 +113,7 @@ static status session_key_loop(nepe2_cli_instance* inst)
 {
     status retval;
     bool should_exit = false;
+    metadata* meta;
 
     while (!should_exit)
     {
@@ -126,8 +128,25 @@ static status session_key_loop(nepe2_cli_instance* inst)
             goto done;
         }
 
-        printf("Session passphrase lookup not implemented.\n");
+        /* look up the metadata for this session key. */
+        retval = get_metadata(&meta, inst);
+        if (STATUS_SUCCESS != retval)
+        {
+            /* TODO - we should support the creation of new passphrases. */
+            fprintf(stderr, "Passphrase not found. Try again.\n\n");
+            goto cleanup_session;
+        }
 
+        printf("Metadata found... key generation not yet implemented.\n\n");
+
+        retval = resource_release(metadata_resource_handle(meta));
+        if (STATUS_SUCCESS != retval)
+        {
+            fprintf(stderr, "Error cleaning up metadata.\n");
+            goto cleanup_session;
+        }
+
+    cleanup_session:
         /* release the session passphrase. */
         retval =
             resource_release(
@@ -369,6 +388,51 @@ static status open_database(const char* dbname, nepe2_cli_instance* inst)
     /* success. */
     retval = STATUS_SUCCESS;
     goto done;
+
+done:
+    return retval;
+}
+
+/**
+ * \brief Get the metadata for a given combination of passphrases.
+ *
+ * \param meta          Pointer to the \ref metadata pointer to set with the
+ *                      created \ref metadata instance on success.
+ * \param inst          The application instance for this operation.
+ *
+ * \returns a status code indicating success or failure.
+ *      - STATUS_SUCCESS on success.
+ *      - a non-zero error code on failure.
+ */
+static status get_metadata(metadata** meta, nepe2_cli_instance* inst)
+{
+    status retval, release_retval;
+    database_value* value;
+
+    /* look up a database value based on this data. */
+    retval =
+        database_lookup_value(
+            &value, inst->alloc, inst->db, inst->salt, inst->master_passphrase,
+            inst->session_passphrase, true);
+    if (STATUS_SUCCESS != retval)
+    {
+        goto done;
+    }
+
+    /* convert this value to metadata using the given key. */
+    retval =
+        metadata_from_database_value(
+            meta, inst->alloc, value, inst->encryption_key);
+
+    /* clean up on the way out. */
+    goto cleanup_value;
+
+cleanup_value:
+    release_retval = resource_release(database_value_resource_handle(value));
+    if (STATUS_SUCCESS != release_retval)
+    {
+        retval = release_retval;
+    }
 
 done:
     return retval;
